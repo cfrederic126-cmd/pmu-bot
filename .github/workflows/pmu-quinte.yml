@@ -1,0 +1,30 @@
+name: Analyse Quinté+ PMU
+
+on:
+  schedule:
+    # 12h15 UTC ≈ avant la plupart des courses Quinté+ de l'après-midi/soir.
+    # Ajuste l'heure selon la course visée (le Quinté+ n'a pas d'horaire fixe).
+    - cron: "15 12 * * *"
+  workflow_dispatch: {}   # permet de le lancer manuellement depuis GitHub
+
+jobs:
+  analyse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Installer les dépendances
+        run: pip install -r requirements.txt
+
+      - name: Lancer l'analyse Quinté+
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          # Optionnel : forcer une course précise si la détection auto échoue
+          # PMU_REUNION: R1
+          # PMU_COURSE: C4
+        run: python pmu_quinte_bot.py
