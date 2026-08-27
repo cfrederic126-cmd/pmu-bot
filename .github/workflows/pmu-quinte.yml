@@ -1,0 +1,25 @@
+name: Analyse Quinté+ PMU
+
+on:
+  schedule:
+    - cron: "15 12 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  analyse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Installer les dépendances
+        run: pip install -r requirements.txt
+
+      - name: Lancer l'analyse Quinté+
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.CHAT_ID }}
+        run: python pmu_quinte_bot.py
